@@ -1,8 +1,13 @@
 package com.sistema.dscatalog.resources;
 
+import com.sistema.dscatalog.dto.CategoryDTO;
 import com.sistema.dscatalog.entities.Category;
 import com.sistema.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +24,10 @@ public class CategoryResource
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> findAll()
+    public ResponseEntity<List<CategoryDTO>> findAll()
     {
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAll());
+        List<CategoryDTO> list = categoryService.findAll();
+
+        return ResponseEntity.ok().body(list);
     }
 }
