@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -23,10 +22,10 @@ public class CategoryResource
     private CategoryService categoryService;
 
     /*
-     * Salvar
+     * Insere Categoria
      */
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody CategoryDTO categoryDTO)
+    public ResponseEntity<Object> insert(@RequestBody CategoryDTO categoryDTO)
     {
         var category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
@@ -34,7 +33,20 @@ public class CategoryResource
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category));
     }
 
+    /*
+     * Atualiza Categoria
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO)
+    {
+        categoryDTO = categoryService.update(id, categoryDTO);
 
+        return ResponseEntity.ok().body(categoryDTO);
+    }
+
+    /*
+     * Listar Todas Categorias
+     */
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> findAll()
     {
@@ -43,6 +55,9 @@ public class CategoryResource
         return ResponseEntity.ok().body(list);
     }
 
+    /*
+     * Pesquisa por id
+     */
     @GetMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> findById(@PathVariable Long id)
     {
