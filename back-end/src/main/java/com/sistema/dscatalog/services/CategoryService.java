@@ -20,6 +20,12 @@ public class CategoryService
     private CategoryRepository categoryRepository;
 
     @Transactional
+    public Category save(Category category)
+    {
+        return categoryRepository.save(category);
+    }
+
+    @Transactional
     public List<CategoryDTO> findAll()
     {
         List<Category> listCategory = categoryRepository.findAll();
