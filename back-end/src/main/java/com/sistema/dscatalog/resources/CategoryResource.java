@@ -5,14 +5,14 @@ import com.sistema.dscatalog.entities.Category;
 import com.sistema.dscatalog.services.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -44,15 +44,22 @@ public class CategoryResource
         return ResponseEntity.ok().body(categoryDTO);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Long id)
+    {
+        categoryService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
     /*
      * Listar Todas Categorias
+     * Paginação de 10 ordenação ASC
      */
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAll()
+    public ResponseEntity<Page<Category>> getAllParkingSpots(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
     {
-        List<CategoryDTO> list = categoryService.findAll();
-
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAllPaged(pageable));
     }
 
     /*

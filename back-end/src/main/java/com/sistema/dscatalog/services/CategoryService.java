@@ -3,8 +3,14 @@ package com.sistema.dscatalog.services;
 import com.sistema.dscatalog.dto.CategoryDTO;
 import com.sistema.dscatalog.entities.Category;
 import com.sistema.dscatalog.repositories.CategoryRepository;
+import com.sistema.dscatalog.services.exceptions.DataBaseException;
 import com.sistema.dscatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,6 +47,16 @@ public class CategoryService
         return listDTO;
     }
 
+    /*
+     * Busca Paginada
+     */
+    @Transactional
+    public Page<Category> findAllPaged(Pageable pageable)
+    {
+        return categoryRepository.findAll(pageable);
+    }
+
+
     @Transactional
     public CategoryDTO findById(Long id)
     {
@@ -66,5 +83,21 @@ public class CategoryService
        {
             throw new ResourceNotFoundException("Id não encontrado: "+id);
        }
+    }
+
+    public void delete(Long id)
+    {
+        try
+        {
+            categoryRepository.deleteById(id);
+        }
+        catch (EmptyResultDataAccessException e)
+        {
+            throw new ResourceNotFoundException("Id não encontrado: "+id);
+        }
+        catch (DataIntegrityViolationException e)
+        {
+            throw new DataBaseException("Violação de integridade!");
+        }
     }
 }
