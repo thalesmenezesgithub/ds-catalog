@@ -17,7 +17,7 @@ public class Product implements Serializable
     @Column(nullable = false, length = 150)
     private String name;
 
-    @Column(nullable = false, length = 200)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private Double price;
@@ -26,6 +26,14 @@ public class Product implements Serializable
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant date;
 
+    /*
+     * Relacionamento muitos para muitos - n para n
+     */
+    @ManyToMany
+    @JoinTable(name = "tb_product_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
     Set<Category> categories = new HashSet<>();
 
     public Long getId() {
