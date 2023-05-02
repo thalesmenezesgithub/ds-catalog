@@ -57,7 +57,7 @@ public class CategoryResource
      * Paginação de 10 ordenação ASC
      */
     @GetMapping
-    public ResponseEntity<Page<Category>> getAllParkingSpots(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
+    public ResponseEntity<Page<Category>> getAllCategories(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
     {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAllPaged(pageable));
     }
@@ -68,8 +68,8 @@ public class CategoryResource
     @GetMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> findById(@PathVariable Long id)
     {
-        CategoryDTO categoryDTO = categoryService.findById(id);
 
+        CategoryDTO categoryDTO = categoryService.findById(id);
         return ResponseEntity.ok().body(categoryDTO);
     }
 
