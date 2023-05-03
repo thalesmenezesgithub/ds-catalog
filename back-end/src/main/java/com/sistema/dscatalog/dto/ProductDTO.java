@@ -99,6 +99,16 @@ public class ProductDTO implements Serializable
         this.imgUrl = imgUrl;
     }
 
+    public Instant getDate()
+    {
+        return date;
+    }
+
+    public void setDate(Instant date)
+    {
+        this.date = date;
+    }
+
     public List<CategoryDTO> getCategories()
     {
         return categories;

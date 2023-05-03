@@ -4,6 +4,7 @@ import com.sistema.dscatalog.dto.CategoryDTO;
 import com.sistema.dscatalog.dto.ProductDTO;
 import com.sistema.dscatalog.entities.Category;
 import com.sistema.dscatalog.entities.Product;
+import com.sistema.dscatalog.repositories.CategoryRepository;
 import com.sistema.dscatalog.repositories.ProductRepository;
 import com.sistema.dscatalog.services.exceptions.DataBaseException;
 import com.sistema.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +28,24 @@ public class ProductService
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Transactional
-    public Product save(Product product)
+    public ProductDTO save(ProductDTO productDTO)
     {
-        return productRepository.save(product);
+        Product product = new Product();
+        copyDtoToEntity(productDTO, product);
+
+        if(product.getCategories().size() == 0)
+        {
+            Category category = categoryRepository.getReferenceById(1L);
+            product.getCategories().add(category);
+        }
+
+        product = productRepository.save(product);
+
+        return  new ProductDTO(product);
     }
 
     @Transactional
@@ -71,23 +87,49 @@ public class ProductService
         return new ProductDTO(product, product.getCategories());
     }
 
-//    @Transactional
-//    public ProductDTO update(Long id, ProductDTO productDTO)
-//    {
-//       try
-//       {
-//           Product product = productRepository.getOne(id);
-//           product.setName(productDTO.getName());
-//           product.setDate();
-//           category = productRepository.save(category);
-//
-//           return new CategoryDTO(category);
-//       }
-//       catch (EntityNotFoundException e)
-//       {
-//            throw new ResourceNotFoundException("Id não encontrado: "+id);
-//       }
-//    }
+    /*
+     * Atualiza
+     */
+    @Transactional
+    public ProductDTO update(Long id, ProductDTO productDTO)
+    {
+       try
+       {
+           Product product = productRepository.getOne(id);
+           copyDtoToEntity(productDTO, product);
+
+           if (product.getCategories().size() == 0)
+           {
+               Category cat = categoryRepository.getOne(1L);
+               product.getCategories().add(cat);
+           }
+
+           product = productRepository.save(product);
+           return new ProductDTO(product);
+       }
+       catch (EntityNotFoundException e)
+       {
+            throw new ResourceNotFoundException("Id não encontrado: "+id);
+       }
+    }
+
+
+    private void copyDtoToEntity(ProductDTO productDTO, Product product)
+    {
+        product.setName(productDTO.getName());
+        product.setDate(productDTO.getDate());
+        product.setDescription(productDTO.getDescription());
+        product.setImgUrl(productDTO.getImgUrl());
+        product.setPrice(productDTO.getPrice());
+
+        product.getCategories().clear();
+
+        for(CategoryDTO catDTO : productDTO.getCategories())
+        {
+            Category category = categoryRepository.getOne(catDTO.getId());
+            product.getCategories().add(category);
+        }
+    }
 
     public void delete(Long id)
     {
