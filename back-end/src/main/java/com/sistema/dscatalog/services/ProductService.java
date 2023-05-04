@@ -8,6 +8,7 @@ import com.sistema.dscatalog.repositories.CategoryRepository;
 import com.sistema.dscatalog.repositories.ProductRepository;
 import com.sistema.dscatalog.services.exceptions.DataBaseException;
 import com.sistema.dscatalog.services.exceptions.ResourceNotFoundException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -90,31 +91,55 @@ public class ProductService
     /*
      * Atualiza
      */
+//    @Transactional
+//    public ProductDTO update(Long id, ProductDTO productDTO)
+//    {
+//       try
+//       {
+//           Product product = productRepository.getOne(id);
+//           copyDtoToEntity(productDTO, product);
+//
+//           if (product.getCategories().size() == 0)
+//           {
+//               Category cat = categoryRepository.getOne(1L);
+//               product.getCategories().add(cat);
+//           }
+//
+//           product = productRepository.save(product);
+//           return new ProductDTO(product);
+//       }
+//       catch (EntityNotFoundException e)
+//       {
+//            throw new ResourceNotFoundException("Id não encontrado: "+id);
+//       }
+//    }
+
     @Transactional
     public ProductDTO update(Long id, ProductDTO productDTO)
     {
-       try
-       {
-           Product product = productRepository.getOne(id);
-           copyDtoToEntity(productDTO, product);
+        try
+        {
+            Product product = productRepository.getOne(id);
+            copyDtoToEntity(productDTO, product);
 
-           if (product.getCategories().size() == 0)
-           {
-               Category cat = categoryRepository.getOne(1L);
-               product.getCategories().add(cat);
-           }
+//            if (product.getCategories().size() == 0)
+//            {
+//                Category cat = categoryRepository.getOne(1L);
+//                product.getCategories().add(cat);
+//            }
 
-           product = productRepository.save(product);
-           return new ProductDTO(product);
-       }
-       catch (EntityNotFoundException e)
-       {
-            throw new ResourceNotFoundException("Id não encontrado: "+id);
-       }
+            product = productRepository.save(product);
+
+            return new ProductDTO(product);
+        }
+        catch (EntityNotFoundException e)
+        {
+            throw new ResourceNotFoundException("Código não encontrado "+ id);
+        }
     }
 
 
-    private void copyDtoToEntity(ProductDTO productDTO, Product product)
+    private void copyDtoToEntity(@NotNull ProductDTO productDTO, Product product)
     {
         product.setName(productDTO.getName());
         product.setDate(productDTO.getDate());

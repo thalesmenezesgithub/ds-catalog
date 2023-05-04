@@ -60,10 +60,10 @@ public class ProductResource
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id,@Valid @RequestBody ProductDTO dto)
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id,@Valid @RequestBody ProductDTO productDTO)
     {
-        dto = productService.update(id, dto);
+        productDTO = productService.update(id, productDTO);
 
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok().body(productDTO);
     }
 }
