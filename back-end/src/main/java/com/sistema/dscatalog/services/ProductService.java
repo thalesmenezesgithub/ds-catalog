@@ -88,31 +88,6 @@ public class ProductService
         return new ProductDTO(product, product.getCategories());
     }
 
-    /*
-     * Atualiza
-     */
-//    @Transactional
-//    public ProductDTO update(Long id, ProductDTO productDTO)
-//    {
-//       try
-//       {
-//           Product product = productRepository.getOne(id);
-//           copyDtoToEntity(productDTO, product);
-//
-//           if (product.getCategories().size() == 0)
-//           {
-//               Category cat = categoryRepository.getOne(1L);
-//               product.getCategories().add(cat);
-//           }
-//
-//           product = productRepository.save(product);
-//           return new ProductDTO(product);
-//       }
-//       catch (EntityNotFoundException e)
-//       {
-//            throw new ResourceNotFoundException("Id não encontrado: "+id);
-//       }
-//    }
 
     @Transactional
     public ProductDTO update(Long id, ProductDTO productDTO)
@@ -122,11 +97,11 @@ public class ProductService
             Product product = productRepository.getOne(id);
             copyDtoToEntity(productDTO, product);
 
-//            if (product.getCategories().size() == 0)
-//            {
-//                Category cat = categoryRepository.getOne(1L);
-//                product.getCategories().add(cat);
-//            }
+            if (product.getCategories().size() == 0)
+            {
+                Category cat = categoryRepository.getOne(1L);
+                product.getCategories().add(cat);
+            }
 
             product = productRepository.save(product);
 
